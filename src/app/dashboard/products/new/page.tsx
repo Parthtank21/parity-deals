@@ -1,5 +1,6 @@
-import React from "react";
 import PageWithBackButton from "../../_components/PageWithBackButton";
+import ProductDetailsForm from "../../_components/forms/ProductDetailsForm";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function NewProductPage() {
   return (
@@ -7,7 +8,14 @@ export default function NewProductPage() {
       backButtonHref="/dashboard/products"
       pageTitle="Create Product"
     >
-      NewProductPage
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl">Product Details</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ProductDetailsForm />
+        </CardContent>
+      </Card>
     </PageWithBackButton>
   );
 }
