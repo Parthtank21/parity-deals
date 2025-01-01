@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { productDetailsSchema } from "@/schemas/product";
-import { createProduct } from "@/server/actions/product";
+import { createProduct, updateProduct } from "@/server/actions/product";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,23 +22,36 @@ import {
 
 type ProductDetailsSchemaType = z.infer<typeof productDetailsSchema>;
 
-export default function ProductDetailsForm() {
+export default function ProductDetailsForm({
+  product,
+}: {
+  product?: {
+    id: string;
+    name: string;
+    description: string | null;
+    url: string;
+  };
+}) {
   const { toast } = useToast();
   const form = useForm<ProductDetailsSchemaType>({
     resolver: zodResolver(productDetailsSchema),
-    defaultValues: {
-      name: "",
-      url: "",
-      description: "",
-    },
+    defaultValues: product
+      ? { ...product, description: product.description ?? "" }
+      : {
+          name: "",
+          url: "",
+          description: "",
+        },
   });
 
   async function onSubmit(values: ProductDetailsSchemaType) {
-    const data = await createProduct(values);
+    const action =
+      product == null ? createProduct : updateProduct.bind(null, product.id);
+    const data = await action(values);
 
     if (data?.message) {
       toast({
-        title: data.error ? "Error" : "Sucess",
+        title: data.error ? "Error" : "Success",
         description: data.message,
         variant: data.error ? "destructive" : "default",
       });

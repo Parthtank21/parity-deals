@@ -7,6 +7,7 @@ import { productDetailsSchema } from "@/schemas/product";
 import {
   createProduct as createProductDb,
   deleteProduct as deleteProductDb,
+  updateProduct as updateProductDb,
 } from "../db/products";
 
 export async function createProduct(
@@ -37,5 +38,25 @@ export async function deleteProduct(id: string) {
   return {
     error: !isSuccess,
     message: isSuccess ? "Successfully deleted your product" : errorMessage,
+  };
+}
+
+export async function updateProduct(
+  id: string,
+  unsafeData: z.infer<typeof productDetailsSchema>
+): Promise<{ error: boolean; message: string } | undefined> {
+  const { userId } = await auth();
+  const { success, data } = productDetailsSchema.safeParse(unsafeData);
+  const errorMessage = "There was an error updating your product";
+
+  if (!success || userId == null) {
+    return { error: true, message: errorMessage };
+  }
+
+  const isSuccess = await updateProductDb(data, { id, userId });
+
+  return {
+    error: !isSuccess,
+    message: isSuccess ? "Product details updated successfuly" : errorMessage,
   };
 }
