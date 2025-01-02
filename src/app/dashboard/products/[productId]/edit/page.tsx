@@ -1,10 +1,16 @@
 import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { getProduct, getProductCountryGroups } from "@/server/db/products";
+import { canCustomizeBanner, canRemoveBranding } from "@/server/permissions";
+import {
+  getProduct,
+  getProductCountryGroups,
+  getProductCustomization,
+} from "@/server/db/products";
 
 import PageWithBackButton from "@/app/dashboard/_components/PageWithBackButton";
 import ProductDetailsForm from "@/app/dashboard/_components/forms/ProductDetailsForm";
 import CountryDiscountForm from "@/app/dashboard/_components/forms/CountryDiscountForm";
+import ProductCustomizationForm from "@/app/dashboard/_components/forms/ProductCustomizationForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -49,7 +55,9 @@ export default async function EditProductPage({
         <TabsContent value="country">
           <CountryTab productId={productId} userId={userId} />
         </TabsContent>
-        <TabsContent value="customization">customization</TabsContent>
+        <TabsContent value="customization">
+          <CustomizationsTab productId={productId} userId={userId} />
+        </TabsContent>
       </Tabs>
     </PageWithBackButton>
   );
@@ -102,6 +110,32 @@ async function CountryTab({
         <CountryDiscountForm
           productId={productId}
           countryGroups={countryGroups}
+        />
+      </CardContent>
+    </Card>
+  );
+}
+
+async function CustomizationsTab({
+  productId,
+  userId,
+}: {
+  productId: string;
+  userId: string;
+}) {
+  const customization = await getProductCustomization({ productId, userId });
+  if (customization == null) return notFound();
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-xl">Banner Customization</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ProductCustomizationForm
+          canRemoveBranding={await canRemoveBranding(userId)}
+          canCustomizeBanner={await canCustomizeBanner(userId)}
+          customization={customization}
         />
       </CardContent>
     </Card>

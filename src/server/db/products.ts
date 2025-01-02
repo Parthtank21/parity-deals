@@ -33,6 +33,20 @@ export function getProductCountryGroups({
   return cachedFn({ productId, userId });
 }
 
+export function getProductCustomization({
+  productId,
+  userId,
+}: {
+  productId: string;
+  userId: string;
+}) {
+  const cachedFn = dbCache(getProductCustomizationInternal, {
+    tags: [getIdTag(productId, CACHE_TAGS.products)],
+  });
+
+  return cachedFn({ productId, userId });
+}
+
 export function getProducts(userId: string, { limit }: { limit?: number }) {
   const cachedFn = dbCache(getProductsInternal, {
     tags: [getUserTag(userId, CACHE_TAGS.products)],
@@ -212,6 +226,24 @@ async function getProductCountryGroupsInternal({
       discount: group.countryGroupDiscounts.at(0),
     };
   });
+}
+
+async function getProductCustomizationInternal({
+  productId,
+  userId,
+}: {
+  productId: string;
+  userId: string;
+}) {
+  const data = await db.query.ProductTable.findFirst({
+    where: ({ id, clerkUserId }, { eq, and }) =>
+      and(eq(id, productId), eq(clerkUserId, userId)),
+    with: {
+      productCustomization: true,
+    },
+  });
+
+  return data?.productCustomization;
 }
 
 function getProductsInternal(userId: string, { limit }: { limit?: number }) {
