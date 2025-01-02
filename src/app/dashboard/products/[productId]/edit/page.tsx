@@ -3,8 +3,9 @@ import { auth } from "@clerk/nextjs/server";
 import { getProduct, getProductCountryGroups } from "@/server/db/products";
 
 import PageWithBackButton from "@/app/dashboard/_components/PageWithBackButton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProductDetailsForm from "@/app/dashboard/_components/forms/ProductDetailsForm";
+import CountryDiscountForm from "@/app/dashboard/_components/forms/CountryDiscountForm";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
@@ -12,7 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import CountryDiscountForm from "@/app/dashboard/_components/forms/CountryDiscountForm";
 
 export default async function EditProductPage({
   params,
