@@ -101,7 +101,7 @@ export default function ProductDetailsForm({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Enter your website URL</FormLabel>
+              <FormLabel>Product Description</FormLabel>
               <FormControl>
                 <Textarea className="min-h-20 resize-none" {...field} />
               </FormControl>
