@@ -23,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import NoPermissionCard from "@/components/NoPermissionCard";
 
 export default function ProductCustomizationForm({
   customization,
@@ -70,16 +71,23 @@ export default function ProductCustomizationForm({
 
   return (
     <>
-      <Banner
-        message={formValues.locationMessage}
-        mappings={{
-          country: "India",
-          coupon: "HALF-OFF",
-          discount: "50",
-        }}
-        customization={formValues}
-        canRemoveBranding={canRemoveBranding}
-      />
+      <div>
+        <Banner
+          message={formValues.locationMessage}
+          mappings={{
+            country: "India",
+            coupon: "HALF-OFF",
+            discount: "50",
+          }}
+          customization={formValues}
+          canRemoveBranding={canRemoveBranding}
+        />
+      </div>
+      {!canCustomizeBanner && (
+        <div className="mt-8">
+          <NoPermissionCard />
+        </div>
+      )}
       <Form {...form}>
         <form
           className="flex gap-6 flex-col mt-8"

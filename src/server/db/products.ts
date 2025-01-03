@@ -1,6 +1,6 @@
 import { db } from "@/drizzle/db";
 import { BatchItem } from "drizzle-orm/batch";
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, count, eq, inArray, sql } from "drizzle-orm";
 import {
   CountryGroupDiscountTable,
   ProductCustomizationTable,
@@ -47,7 +47,10 @@ export function getProductCustomization({
   return cachedFn({ productId, userId });
 }
 
-export function getProducts(userId: string, { limit }: { limit?: number }) {
+export function getProducts(
+  userId: string,
+  { limit }: { limit?: number } = {}
+) {
   const cachedFn = dbCache(getProductsInternal, {
     tags: [getUserTag(userId, CACHE_TAGS.products)],
   });
@@ -61,6 +64,14 @@ export function getProduct({ id, userId }: { id: string; userId: string }) {
   });
 
   return cachedFn({ id, userId });
+}
+
+export function getProductCount(userId: string) {
+  const cachedFn = dbCache(getProductCountInternal, {
+    tags: [getUserTag(userId, CACHE_TAGS.products)],
+  });
+
+  return cachedFn(userId);
 }
 
 export async function createProduct(data: typeof ProductTable.$inferInsert) {
@@ -278,4 +289,13 @@ function getProductInternal({ id, userId }: { id: string; userId: string }) {
     where: ({ id: productId, clerkUserId }, { eq, and }) =>
       and(eq(productId, id), eq(clerkUserId, userId)),
   });
+}
+
+async function getProductCountInternal(userId: string) {
+  const counts = await db
+    .select({ productCount: count() })
+    .from(ProductTable)
+    .where(eq(ProductTable.clerkUserId, userId));
+
+  return counts[0]?.productCount ?? 0;
 }
