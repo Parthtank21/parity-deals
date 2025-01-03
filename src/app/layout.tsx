@@ -28,7 +28,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html
         lang="en"
-        className="scroll-smooth [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-accent/5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/15"
+        className="scroll-smooth [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-accent/5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/15 hover:[&::-webkit-scrollbar-thumb]:bg-primary/30"
       >
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans bg-background`}
