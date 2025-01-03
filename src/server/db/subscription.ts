@@ -32,11 +32,11 @@ export async function createUserSubscription(
 }
 
 export async function getUserSubscription(userId: string) {
-  const cacheFn = dbCache(getUserSubscriptionInternal, {
+  const cachedFn = dbCache(getUserSubscriptionInternal, {
     tags: [getUserTag(userId, CACHE_TAGS.subscription)],
   });
 
-  return cacheFn(userId);
+  return cachedFn(userId);
 }
 
 export async function getUserSubscriptionTier(userId: string) {
