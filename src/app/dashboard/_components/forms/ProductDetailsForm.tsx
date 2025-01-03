@@ -10,6 +10,7 @@ import { createProduct, updateProduct } from "@/server/actions/product";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import RequiredLabelIcon from "@/components/RequiredLabelIcon";
 import {
   Form,
   FormControl,
@@ -70,7 +71,10 @@ export default function ProductDetailsForm({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Product Name</FormLabel>
+                <FormLabel>
+                  Product Name
+                  <RequiredLabelIcon />
+                </FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -83,7 +87,10 @@ export default function ProductDetailsForm({
             name="url"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Enter your website URL</FormLabel>
+                <FormLabel>
+                  Enter your website URL
+                  <RequiredLabelIcon />
+                </FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
