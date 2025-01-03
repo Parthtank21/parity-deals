@@ -3,9 +3,12 @@
 import { z } from "zod";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { productCustomizationSchema } from "@/schemas/product";
+import { updateProductCustomization } from "@/server/actions/product";
 
+import Banner from "@/components/Banner";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -39,6 +42,7 @@ export default function ProductCustomizationForm({
   canRemoveBranding: boolean;
   canCustomizeBanner: boolean;
 }) {
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof productCustomizationSchema>>({
     resolver: zodResolver(productCustomizationSchema),
     defaultValues: {
@@ -48,11 +52,34 @@ export default function ProductCustomizationForm({
   });
 
   async function onSubmit(values: z.infer<typeof productCustomizationSchema>) {
-    console.log(values);
+    const data = await updateProductCustomization(
+      customization.productId,
+      values
+    );
+
+    if (data.message) {
+      toast({
+        title: data.error ? "Error" : "Success",
+        description: data.message,
+        variant: data.error ? "destructive" : "default",
+      });
+    }
   }
+
+  const formValues = form.watch();
 
   return (
     <>
+      <Banner
+        message={formValues.locationMessage}
+        mappings={{
+          country: "India",
+          coupon: "HALF-OFF",
+          discount: "50",
+        }}
+        customization={formValues}
+        canRemoveBranding={canRemoveBranding}
+      />
       <Form {...form}>
         <form
           className="flex gap-6 flex-col mt-8"
