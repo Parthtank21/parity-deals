@@ -174,14 +174,24 @@ function PricingCard({
   const isMostPopular = name === "Standard";
 
   return (
-    <Card>
+    <Card
+      className={cn(
+        "relative shadow-none rounded-3xl overflow-hidden",
+        isMostPopular ? "border-accent border-2" : ""
+      )}
+    >
+      {isMostPopular && (
+        <div className="bg-accent text-accent-foreground absolute py-1 px-10 -right-8 top-24 rotate-45 origin-top-right">
+          Most popular
+        </div>
+      )}
       <CardHeader>
         <div className="text-accent font-semibold mb-5">{name}</div>
         <CardTitle className="text-xl font-bold">
           ${priceInCents / 100} /mo
         </CardTitle>
         <CardDescription>
-          {formatCompactNumber(maxNumberOfVisits)} pricing per visits/mo
+          {formatCompactNumber(maxNumberOfVisits)} pricing page visits/mo
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -197,7 +207,7 @@ function PricingCard({
       <CardFooter className="flex flex-col gap-4 items-start">
         <Feature className="font-bold">
           {maxNumberOfProducts}{" "}
-          {maxNumberOfProducts === 1 ? "Product" : "Products"}
+          {maxNumberOfProducts === 1 ? "product" : "products"}
         </Feature>
         <Feature>PPP discounts</Feature>
         {canAccessAnalytics && <Feature>Advanced analytics</Feature>}
