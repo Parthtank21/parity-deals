@@ -12,6 +12,11 @@ import {
   subscriptionTiersInOrder,
   TierNames,
 } from "@/data/subscriptionTiers";
+import {
+  createCancelSession,
+  createCheckoutSession,
+  createCustomerPortalSession,
+} from "@/server/actions/stripe";
 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -71,7 +76,7 @@ export default async function SubscriptionPage() {
           </Card>
         </div>
 
-        {tier === subscriptionTiers.Free && (
+        {tier != subscriptionTiers.Free && (
           <Card>
             <CardHeader>
               <CardTitle>You are currently on the {tier.name} plan</CardTitle>
@@ -81,7 +86,7 @@ export default async function SubscriptionPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form action={undefined}>
+              <form action={createCustomerPortalSession}>
                 <Button variant="accent">Manage Subscription</Button>
               </form>
             </CardContent>
@@ -121,7 +126,13 @@ function PricingCard({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={undefined}>
+        <form
+          action={
+            name === "Free"
+              ? createCancelSession
+              : createCheckoutSession.bind(null, name)
+          }
+        >
           <Button
             disabled={isCurrent}
             variant={isCurrent ? "accent" : "default"}
