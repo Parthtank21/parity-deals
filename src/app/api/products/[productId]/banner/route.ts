@@ -9,6 +9,8 @@ import { getProductForBanner } from "@/server/db/products";
 import { createProductView } from "@/server/db/productViews";
 import { canRemoveBranding, canShowDiscountBanner } from "@/server/permissions";
 
+export const runtime = "edge";
+
 export async function GET(
   request: NextRequest,
   segmentData: { params: Promise<{ productId: string }> }
