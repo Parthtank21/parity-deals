@@ -40,6 +40,10 @@ export default async function SubscriptionPage() {
     startOfMonth(new Date())
   );
 
+  async function handleFormAction() {
+    await createCustomerPortalSession();
+  }
+
   return (
     <>
       <h1 className="text-3xl mb-6 font-semibold">Your Subscription</h1>
@@ -86,7 +90,7 @@ export default async function SubscriptionPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form action={createCustomerPortalSession}>
+              <form action={handleFormAction}>
                 <Button variant="accent">Manage Subscription</Button>
               </form>
             </CardContent>
@@ -114,6 +118,14 @@ function PricingCard({
 }: (typeof subscriptionTiersInOrder)[number] & { currentTierName: TierNames }) {
   const isCurrent = currentTierName === name;
 
+  async function handleFormAction() {
+    if (name === "Free") {
+      await createCancelSession();
+    } else {
+      await createCheckoutSession.bind(null, name);
+    }
+  }
+
   return (
     <Card className="shadow-none rounded-3xl overflow-hidden">
       <CardHeader>
@@ -126,13 +138,7 @@ function PricingCard({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form
-          action={
-            name === "Free"
-              ? createCancelSession
-              : createCheckoutSession.bind(null, name)
-          }
-        >
+        <form action={handleFormAction}>
           <Button
             disabled={isCurrent}
             variant={isCurrent ? "accent" : "default"}
