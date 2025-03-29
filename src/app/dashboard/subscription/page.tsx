@@ -40,13 +40,18 @@ export default async function SubscriptionPage() {
     startOfMonth(new Date())
   );
 
-  async function handleFormAction() {
-    await createCustomerPortalSession();
-  }
+  const handleSubmit = async (formData: FormData): Promise<void> => {
+    "use server";
+    try {
+      await createCustomerPortalSession();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
 
   return (
     <>
-      <h1 className="text-3xl mb-6 font-semibold">Your Subscription</h1>
+      <h1 className="mb-6 text-3xl font-semibold">Your Subscription</h1>
       <div className="flex flex-col gap-8 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <Card>
@@ -68,8 +73,7 @@ export default async function SubscriptionPage() {
             <CardHeader>
               <CardTitle className="text-lg">Number of Products</CardTitle>
               <CardDescription>
-                {formatCompactNumber(productCount)} /{" "}
-                {formatCompactNumber(tier.maxNumberOfProducts)} products created
+                {productCount} / {tier.maxNumberOfProducts} products created
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -79,7 +83,6 @@ export default async function SubscriptionPage() {
             </CardContent>
           </Card>
         </div>
-
         {tier != subscriptionTiers.Free && (
           <Card>
             <CardHeader>
@@ -90,8 +93,14 @@ export default async function SubscriptionPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form action={handleFormAction}>
-                <Button variant="accent">Manage Subscription</Button>
+              <form action={handleSubmit}>
+                <Button
+                  variant="accent"
+                  className="text-lg rounded-lg"
+                  size="lg"
+                >
+                  Manage Subscription
+                </Button>
               </form>
             </CardContent>
           </Card>
@@ -118,18 +127,23 @@ function PricingCard({
 }: (typeof subscriptionTiersInOrder)[number] & { currentTierName: TierNames }) {
   const isCurrent = currentTierName === name;
 
-  async function handleFormAction() {
-    if (name === "Free") {
-      await createCancelSession();
-    } else {
-      await createCheckoutSession.bind(null, name);
+  const handleSubmit = async (formData: FormData): Promise<void> => {
+    "use server";
+    try {
+      if (name === "Free") {
+        await createCancelSession();
+      } else {
+        await createCheckoutSession.call(null, name);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
     }
-  }
+  };
 
   return (
     <Card className="shadow-none rounded-3xl overflow-hidden">
       <CardHeader>
-        <div className="text-accent font-semibold mb-5">{name}</div>
+        <div className="text-accent font-semibold mb-8">{name}</div>
         <CardTitle className="text-xl font-bold">
           ${priceInCents / 100} /mo
         </CardTitle>
@@ -138,11 +152,11 @@ function PricingCard({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={handleFormAction}>
+        <form action={handleSubmit}>
           <Button
             disabled={isCurrent}
-            variant={isCurrent ? "accent" : "default"}
-            className="text-md w-full rounded-lg"
+            className="text-lg w-full rounded-lg"
+            size="lg"
           >
             {isCurrent ? "Current" : "Swap"}
           </Button>
